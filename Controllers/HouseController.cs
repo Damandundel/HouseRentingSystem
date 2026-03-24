@@ -15,8 +15,8 @@ namespace HouseRentingSystem.Controllers
                 Address = "Miami, Florida",
                 ImageUrl = @"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvcje9el9YUxSqN4VSt3llpb6su9ghN-_ZbA&s"
 
-
             },
+
             new HouseViewModel()
             {
                 Id = 2,
