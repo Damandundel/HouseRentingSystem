@@ -1,47 +1,72 @@
-﻿
+﻿using HouseRentingSystem.Data.Data;
 using HouseRentingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using static HouseRentingSystem.Data.Data.DataConstants;
 
-namespace HouseRentingSystem.Controllers
+public class HouseController : Controller
 {
-    public class HouseController : Controller
+    private readonly HouseRentingSystemDbContext context;
+
+    public HouseController(HouseRentingSystemDbContext context)
     {
-        private List<HouseViewModel> houses = new List<HouseViewModel>()
-        {
-            new HouseViewModel()
-            {
-                Id = 1,
-                Name = "Beach House",
-                Address = "Miami, Florida",
-                ImageUrl = @"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvcje9el9YUxSqN4VSt3llpb6su9ghN-_ZbA&s"
-
-            },
-
-            new HouseViewModel()
-            {
-                Id = 2,
-                Name = "Mountain House",
-                Address = "Rila Mountain, Bulgaria",
-                ImageUrl = @"https://bghike.com/en/images/huts_pic/rila_lakes_main.jpg"
-
-            },
-
-            new HouseViewModel()
-            {
-                Id = 3,
-                Name = "Urban House",
-                Address = "Luylin, Sofia",
-                ImageUrl = @"https://cdnp.ues.bg/projects/watermark_thumbs_768/257/180582.jpg"
-
-            }
-        };
-        public IActionResult AllHouses()
-        {
-            return View(houses);
-        }
-        public IActionResult Details(int id)
-        {
-            return View(houses.FirstOrDefault(h => h.Id == id));
-        }
+        this.context = context;
     }
+    [HttpGet]
+    public async Task<IActionResult> AllHouses()
+    {
+        var housesViewModel = await context.Houses
+        .Select(h => new HouseViewModel
+        {
+            Id = h.Id,
+            Name = h.Title,
+            Address = h.Address,
+            ImageUrl = h.ImageUrl
+        })
+        .ToListAsync();
+        return View(housesViewModel);
+    }
+    [HttpGet]
+    public async Task<IActionResult> Details(int Id)
+    {
+        var searched = await context.Houses.FirstOrDefaultAsync(h => h.Id == Id);
+        return View(searched);
+    }
+    public IActionResult CreateHouse()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateHouse(HouseFormViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        bool addressExists = await context.Houses
+            .AnyAsync(h => h.Address.ToLower() == model.Address.ToLower());
+
+        if (addressExists)
+        {
+            ModelState.AddModelError("Address", "This address is already registered");
+            return View(model);
+        }
+
+        var newHouse = new House
+        {
+            Title = model.Title,
+            Address = model.Address,
+            Description = model.Description,
+            ImageUrl = model.ImageUrl,
+            PricePerMonth = model.PricePerMonth,
+          
+        };
+
+        context.Houses.Add(newHouse);
+        await context.SaveChangesAsync();
+
+        return RedirectToAction("AllHouses");
+    }
+}
 }
