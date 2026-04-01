@@ -3,77 +3,88 @@
     ViewData["Title"] = "Register New House";
 }
 
-<div class="container mt-4">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4>Register New House</h4>
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4 py-3 px-4">
+                    <h3 class="mb-0 fw-semibold">Register New House</h3>
+                    <small class="opacity-75">Fill in the details below to add a new property</small>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body p-4">
                     <form asp-action="CreateHouse" method="post">
                         @Html.AntiForgeryToken()
 
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3"></div>
 
-                        <!-- Title -->
-                        <div class="mb-3">
-                            <label asp-for="Title" class="form-label"></label>
-                            <input asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                        </div>
+                        <div class="row">
+                            <!-- Title -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="Title" class="form-label fw-semibold"></label>
+                                <input asp-for="Title" class="form-control rounded-3" placeholder="Enter house title" />
+                                <span asp-validation-for="Title" class="text-danger small"></span>
+                            </div>
 
-                        <!-- Address -->
-                        <div class="mb-3">
-                            <label asp-for="Address" class="form-label"></label>
-                            <input asp-for="Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
-                        </div>
+                            <!-- Address -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="Address" class="form-label fw-semibold"></label>
+                                <input asp-for="Address" class="form-control rounded-3" placeholder="Enter full address" />
+                                <span asp-validation-for="Address" class="text-danger small"></span>
+                            </div>
 
-                        <!-- Description -->
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label"></label>
-                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
+                            <!-- Description -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="Description" class="form-label fw-semibold"></label>
+                                <textarea asp-for="Description" class="form-control rounded-3" rows="5" placeholder="Write a short description..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
 
-                        <!-- Image URL -->
-                        <div class="mb-3">
-                            <label asp-for="ImageUrl" class="form-label"></label>
-                            <input asp-for="ImageUrl" class="form-control" />
-                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                        </div>
+                            <!-- Image URL -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ImageUrl" class="form-label fw-semibold"></label>
+                                <input asp-for="ImageUrl" class="form-control rounded-3" placeholder="Paste image URL" />
+                                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                            </div>
 
-                        <!-- Price -->
-                        <div class="mb-3">
-                            <label asp-for="PricePerMonth" class="form-label"></label>
-                            <input asp-for="PricePerMonth" class="form-control" />
-                            <span asp-validation-for="PricePerMonth" class="text-danger"></span>
+                            <!-- Price -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PricePerMonth" class="form-label fw-semibold"></label>
+                                <input asp-for="PricePerMonth" class="form-control rounded-3" placeholder="Enter monthly price" />
+                                <span asp-validation-for="PricePerMonth" class="text-danger small"></span>
+                            </div>
                         </div>
 
                         <!-- Category -->
-                        @* <div class="mb-3">
-                            <label asp-for="CategoryId" class="form-label"></label>
-                            <select asp-for="CategoryId" asp-items="@Model.Categories" class="form-select">
+                        @* 
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-semibold"></label>
+                            <select asp-for="CategoryId" asp-items="@Model.Categories" class="form-select rounded-3">
                                 <option value="">-- Select Category --</option>
                             </select>
-                            <span asp-validation-for="CategoryId" class="text-danger"></span>
-                        </div> *@
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div> 
+                        *@
 
                         <!-- Agent -->
-                        @* <div class="mb-3">
-                            <label asp-for="AgentId" class="form-label"></label>
-                            <select asp-for="AgentId" asp-items="@Model.Agents" class="form-select">
+                        @* 
+                        <div class="mb-3">
+                            <label asp-for="AgentId" class="form-label fw-semibold"></label>
+                            <select asp-for="AgentId" asp-items="@Model.Agents" class="form-select rounded-3">
                                 <option value="">-- Select Agent --</option>
                             </select>
-                            <span asp-validation-for="AgentId" class="text-danger"></span>
-                        </div> *@
+                            <span asp-validation-for="AgentId" class="text-danger small"></span>
+                        </div> 
+                        *@
 
                         <!-- Buttons -->
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Create House</button>
-                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary px-4 rounded-3">
+                                Create House
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-3">
+                                Cancel
+                            </a>
                         </div>
                     </form>
                 </div>
