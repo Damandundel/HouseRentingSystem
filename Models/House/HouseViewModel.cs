@@ -1,4 +1,4 @@
-﻿namespace HouseRentingSystem.Models
+﻿namespace HouseRentingSystem.Models.House
 {
     public class HouseViewModel
     {

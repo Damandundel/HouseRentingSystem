@@ -12,5 +12,6 @@ namespace HouseRentingSystem.Models.Auth
         [StringLength(80, MinimumLength = 6, ErrorMessage = "Invalid Password")]
         public string Password { get; set; }
         public bool RememberMe { get; set; }
+        public string Email { get; internal set; }
     }
 }

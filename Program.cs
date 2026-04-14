@@ -57,12 +57,17 @@ namespace HouseRentingSystem
             app.UseAuthorization();
 
             app.MapStaticAssets();
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
+            NewMethod(app);
 
             app.Run();
+
+            static void NewMethod(WebApplication app)
+            {
+                app.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}")
+                    .WithStaticAssets();
+            }
         }
     }
 }
