@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
-public class HouseController : Controller
-{
+
     public class HouseController : Controller
     {
         private readonly HouseRentingSystemDbContext context;
@@ -22,6 +21,7 @@ public class HouseController : Controller
         [HttpGet]
         public async Task<IActionResult> AllHouses()
         {
+            var currentUsersId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var housesViewModel = await context.Houses
             .AsNoTracking()
             .Select(h => new HouseViewModel
@@ -29,9 +29,11 @@ public class HouseController : Controller
                 Id = h.Id,
                 Name = h.Title,
                 Address = h.Address,
-                ImageUrl = h.ImageUrl
+                ImageUrl = h.ImageUrl,
+                CurentUserIsOwner = h.AgentId == currentUsersId
             })
             .ToListAsync();
+            ViewBag.Title = "All houses";
             return View(housesViewModel);
         }
         [HttpGet]
@@ -41,7 +43,7 @@ public class HouseController : Controller
                 .Include(h => h.Agent)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(h => h.Id == Id);
-            SearchMethod(searched);
+
             var model = new HouseDetailViewModel()
             {
                 Id = searched.Id,
@@ -55,22 +57,11 @@ public class HouseController : Controller
 
             return View(model);
         }
-
-        private static void SearchMethod(House? searched)
-        {
-            search();
-        }
-
-        private static void search()
-        {
-            throw new NotImplementedException();
-        }
-
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> CreateHouse()
         {
-            List<CategoryViewModel> houseCategories = await context.Categories
+            List<CategoryViewModel> ListOfCategories = await context.Categories
             .AsNoTracking()
             .Select(c => new CategoryViewModel
             {
@@ -78,6 +69,10 @@ public class HouseController : Controller
                 Name = c.Name,
             })
             .ToListAsync();
+            var houseCategories = new HouseFormViewModel()
+            {
+                Categories = ListOfCategories
+            };
             return View(houseCategories);
         }
 
@@ -86,17 +81,30 @@ public class HouseController : Controller
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHouse(HouseFormViewModel model)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var houseCategories = await context.Categories
+                .AsNoTracking()
+                .Select(c => new CategoryViewModel()
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                })
+                .ToListAsync();
+
             if (!ModelState.IsValid)
             {
+
+                model.Categories = houseCategories;
                 return View(model);
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             bool addressExists = await context.Houses
                 .AnyAsync(h => h.Address.ToLower() == model.Address.ToLower());
 
             if (addressExists)
             {
+                model.Categories = houseCategories;
                 ModelState.AddModelError("Address", "This address is already registered");
                 return View(model);
             }
@@ -109,13 +117,33 @@ public class HouseController : Controller
                 ImageUrl = model.ImageUrl,
                 PricePerMonth = model.PricePerMonth,
                 CategoryId = model.SelectedCategoryId,
-                //AgentId = 0
+                AgentId = userId
             };
 
             context.Houses.Add(newHouse);
             await context.SaveChangesAsync();
 
-            return RedirectToAction("AllHouses");
+            return RedirectToAction(nameof(AllHouses));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> MyHouse()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var houses = context.Houses
+                .Where(h => h.AgentId == userId)
+                .Select(h => new HouseViewModel
+                {
+                    Address = h.Address,
+                    ImageUrl = h.ImageUrl,
+                    Name = h.Title,
+                    Id = h.Id,
+                    CurentUserIsOwner = true
+                })
+                .ToListAsync();
+            ViewBag.Title = "My houses";
+            return View(nameof(AllHouses), houses);
         }
     }
-}

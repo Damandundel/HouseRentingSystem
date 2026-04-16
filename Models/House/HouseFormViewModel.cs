@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using HouseRentingSystem.Models.House.Helpers;
 
 
 namespace HouseRentingSystem.Models.House {
     public class HouseFormViewModel
     {
+
         [Required(ErrorMessage = "Title is required")]
         [StringLength(100, MinimumLength = 10, ErrorMessage = "Title must be between 10 and 100 characters")]
         public string Title { get; set; } = null!;
@@ -26,7 +28,7 @@ namespace HouseRentingSystem.Models.House {
         public decimal PricePerMonth { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
-        public List<CategoryViewModel> Categories { get; set; }  // to be repleced string => class!!
+        public List<CategoryViewModel>? Categories { get; set; }
         public int SelectedCategoryId { get; set; }
 
 
