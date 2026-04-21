@@ -1,0 +1,82 @@
+﻿@model HouseFormViewModel
+@{
+    ViewData["Title"] = "Edit House";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Register New House</h4>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Image URL -->
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label"></label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-3">
+                            <label asp-for="PricePerMonth" class="form-label"></label>
+                            <input asp-for="PricePerMonth" class="form-control" />
+                            <span asp-validation-for="PricePerMonth" class="text-danger"></span>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <select asp-for="SelectedCategoryId" class="form-label">
+                                <option value="@Model.Categories.FirstOrDefault(c => c.Id == Model.SelectedCategoryId).Id" >@Model.Categories.FirstOrDefault(c => c.Id == Model.SelectedCategoryId).Name<</option>>
+                                @foreach (var product in Model.Categories)
+                                {
+                                    <option value="@product.Id">@product.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mt-4">
+                            <button class="btn btn-secondary">Save</button>
+                            <a asp-controller="House" asp-route-id="@Model.Id" class="btn btn-secondary">Delete</a>
+                            <a asp-controller="House" asp-action="AllHouses" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
