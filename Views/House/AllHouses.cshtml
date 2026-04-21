@@ -1,5 +1,9 @@
-﻿@model IEnumerable<HousesViewModel>
+﻿@using HouseRentingSystem.Models.House
+@model IEnumerable<HouseViewModel>
 
+@{
+    ViewBag.Title = "All Houses";
+}
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr />
@@ -7,28 +11,14 @@
 <div class="text-center row">
     @foreach (var house in Model)
     {
-
-        <div class="card col-4" style="width: 20rem;">
-            <img class="card-img-top" src="@house.ImageUrl" alt="House Image">
-            <div class="card-body">
-                <h5 class="card-title">@house.Name</h5>
-                <p class="card-text">@house.Address</p>
-            </div>
-            @if (house.CurentUserIsOwner)
-            {
-                <div class="card-footer">
-                    <button class="btn btn-primary"> Edint </button>
-                    <a asp-controller="House" asp-action="Details" asp-route-Id="@house.Id" class="nav-link text-black card col-4" style="width: 20rem;">
-                        Details
-                    </a>
+        <a asp-controller="House" asp-action="Details" asp-route-Id="@house.Id" class="nav-link text-black card col-4" style="width: 20rem;">
+            <div class="card col-4" style="width: 20rem;">
+                <img class="card-img-top" src="@house.ImageUrl" alt="House Image">
+                <div class="card-body">
+                    <h5 class="card-title">@house.Name</h5>
+                    <p class="card-text">@house.Address</p>
                 </div>
-            }
-        </div>
-
+            </div>
+        </a>
     }
 </div>
-<footer class="border-top footer text-muted">
-    <div class="container">
-        <a class="btn btn-primary" role="button" asp-controller="House" asp-action="CreateHouse">Register house</a>
-    </div>
-</footer>
