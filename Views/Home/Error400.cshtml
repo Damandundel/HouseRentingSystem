@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Request Error";
+    var statusCode = ViewData["StatusCode"]?.ToString() ?? "400";
+    var headline = ViewData["Headline"]?.ToString() ?? "That request could not be processed";
+    var message = ViewData["Message"]?.ToString() ?? "Please review the request and try again.";
+}
+
+<section class="d-flex align-items-center justify-content-center py-5">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="max-width: 960px; width: 100%;">
+        <div class="row g-0">
+            <div class="col-lg-5 p-4 p-md-5 text-white" style="background: linear-gradient(160deg, #0f766e 0%, #0ea5e9 100%);">
+                <div class="text-uppercase small fw-semibold mb-3" style="letter-spacing: .16em;">@statusCode • Request issue</div>
+                <h1 class="display-6 fw-bold mb-3">@headline</h1>
+                <p class="mb-0" style="opacity: .92;">@message</p>
+            </div>
+            <div class="col-lg-7 p-4 p-md-5 bg-white">
+                <div class="mx-auto mb-4" style="max-width: 260px;">
+                    <svg viewBox="0 0 320 220" class="img-fluid" aria-hidden="true">
+                        <circle cx="160" cy="92" r="70" fill="#ccfbf1" />
+                        <circle cx="160" cy="92" r="48" fill="#ffffff" />
+                        <path d="M160 56v42" stroke="#0f766e" stroke-width="12" stroke-linecap="round" />
+                        <circle cx="160" cy="120" r="7" fill="#0f766e" />
+                        <rect x="84" y="170" width="152" height="18" rx="9" fill="#99f6e4" />
+                    </svg>
+                </div>
+                <h2 class="fw-bold mb-3">Check the address and try again.</h2>
+                <p class="text-secondary fs-5 mb-4">
+                    The link may be invalid or the requested page may no longer be available.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">Back to home</a>
+                    <a asp-controller="House" asp-action="AllHouses" class="btn btn-outline-secondary px-4">Go to listings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -30,11 +30,14 @@ namespace HouseRentingSystem.Models.House {
             [Required(ErrorMessage = "Category is required")]
             public List<CategoryViewModel>? Categories { get; set; }
             public int SelectedCategoryId { get; set; }
+        public int TotalHouses { get; internal set; }
+        public int TotalRents { get; internal set; }
+        public List<HouseFormViewModel> Houses { get; internal set; }
 
 
 
-            //[Required(ErrorMessage = "Agent is required")]
-            //public int AgentId { get; set; }
-            //public Agent Agent { get; set; }
-        }
+        //[Required(ErrorMessage = "Agent is required")]
+        //public int AgentId { get; set; }
+        //public Agent Agent { get; set; }
+    }
     }

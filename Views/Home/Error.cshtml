@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Server Error";
+}
+
+<section class="d-flex align-items-center justify-content-center py-5">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="max-width: 960px; width: 100%;">
+        <div class="row g-0">
+            <div class="col-lg-5 p-4 p-md-5 text-white" style="background: linear-gradient(160deg, #7c3aed 0%, #2563eb 100%);">
+                <div class="text-uppercase small fw-semibold mb-3" style="letter-spacing: .16em;">500 • Server error</div>
+                <h1 class="display-6 fw-bold mb-3">Something went wrong on our side.</h1>
+                <p class="mb-0" style="opacity: .92;">
+                    The request reached the server, but an unexpected error stopped it from finishing successfully.
+                </p>
+            </div>
+            <div class="col-lg-7 p-4 p-md-5 bg-white">
+                <div class="mx-auto mb-4" style="max-width: 260px;">
+                    <svg viewBox="0 0 320 220" class="img-fluid" aria-hidden="true">
+                        <rect x="30" y="34" width="260" height="156" rx="20" fill="#eef2ff" />
+                        <rect x="56" y="64" width="208" height="20" rx="10" fill="#c7d2fe" />
+                        <rect x="56" y="98" width="146" height="12" rx="6" fill="#dbeafe" />
+                        <rect x="56" y="120" width="184" height="12" rx="6" fill="#dbeafe" />
+                        <circle cx="236" cy="132" r="34" fill="#fecaca" />
+                        <path d="M222 118l28 28M250 118l-28 28" stroke="#dc2626" stroke-width="10" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <h2 class="fw-bold mb-3">Please try again in a moment.</h2>
+                <p class="text-secondary fs-5 mb-4">
+                    You can return to the homepage and continue browsing from there.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">Back to home</a>
+                    <a asp-controller="House" asp-action="AllHouses" class="btn btn-outline-secondary px-4">Browse houses</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

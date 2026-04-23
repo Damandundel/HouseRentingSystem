@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Unauthorized";
+}
+
+<section class="d-flex align-items-center justify-content-center py-5">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="max-width: 960px; width: 100%;">
+        <div class="row g-0">
+            <div class="col-lg-5 p-4 p-md-5 text-white" style="background: linear-gradient(160deg, #991b1b 0%, #ea580c 100%);">
+                <div class="text-uppercase small fw-semibold mb-3" style="letter-spacing: .16em;">401 • Unauthorized</div>
+                <h1 class="display-6 fw-bold mb-3">You do not have access to this page.</h1>
+                <p class="mb-0" style="opacity: .92;">
+                    This area is restricted. Sign in with the correct account or go back to a public page.
+                </p>
+            </div>
+            <div class="col-lg-7 p-4 p-md-5 bg-white">
+                <div class="mx-auto mb-4" style="max-width: 260px;">
+                    <svg viewBox="0 0 320 220" class="img-fluid" aria-hidden="true">
+                        <rect x="88" y="92" width="144" height="96" rx="20" fill="#fed7aa" />
+                        <path d="M120 92V76c0-28 17-46 40-46s40 18 40 46v16" fill="none" stroke="#ea580c" stroke-width="14" stroke-linecap="round" />
+                        <circle cx="160" cy="132" r="16" fill="#9a3412" />
+                        <rect x="152" y="145" width="16" height="22" rx="8" fill="#9a3412" />
+                        <circle cx="248" cy="48" r="24" fill="#fee2e2" />
+                        <path d="M248 36v16M248 60v0" stroke="#dc2626" stroke-width="10" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <h2 class="fw-bold mb-3">Try a different account or return to safety.</h2>
+                <p class="text-secondary fs-5 mb-4">
+                    You can go back to the homepage, browse public listings or sign in first.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-primary px-4">Sign in</a>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">Back to home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

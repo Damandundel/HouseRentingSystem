@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using HouseRentingSystem.Data.Data;
 using HouseRentingSystem.Data.Data.Entities;
-using HouseRentingSystem.Models;
 using HouseRentingSystem.Models.House;
 using HouseRentingSystem.Models.House.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
+namespace HouseRentingSystem.Controllers;
 
 public class HouseController : Controller
 {
@@ -18,34 +18,41 @@ public class HouseController : Controller
     {
         this.context = context;
     }
+
     [HttpGet]
     public async Task<IActionResult> AllHouses()
     {
         var currentUsersId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var housesViewModel = await context.Houses
-        .AsNoTracking()
-        .Where(h => h.IsDeleted == false)
-        .Select(h => new HouseViewModel
-        {
-            Id = h.Id,
-            Name = h.Title,
-            Address = h.Address,
-            ImageUrl = h.ImageUrl,
-            CurentUserIsOwner = h.AgentId == currentUsersId
-        })
-        .ToListAsync();
+            .AsNoTracking()
+            .Where(h => h.IsDeleted == false)
+            .Select(h => new HouseViewModel
+            {
+                Id = h.Id,
+                Name = h.Title,
+                Address = h.Address,
+                ImageUrl = h.ImageUrl,
+                CurentUserIsOwner = h.AgentId == currentUsersId
+            })
+            .ToListAsync();
+
         ViewBag.Title = "All houses";
         return View(housesViewModel);
     }
+
     [HttpGet]
-    public async Task<IActionResult> Details(int Id)
+    public async Task<IActionResult> Details(int id)
     {
         var searched = await context.Houses
-            .Include(h => h.Agent)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(h => h.Id == Id);
+            .Include(h => h.Agent).AsNoTracking().FirstOrDefaultAsync(h => h.Id == id && h.IsDeleted == false);
 
-        var model = new HouseDetailViewModel()
+        if (searched == null)
+        {
+            return NotFound();
+        }
+
+        var model = new HouseDetailViewModel
         {
             Id = searched.Id,
             Address = searched.Address,
@@ -58,22 +65,25 @@ public class HouseController : Controller
 
         return View(model);
     }
+
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> CreateHouse()
     {
-        List<CategoryViewModel> ListOfCategories = await context.Categories
-        .AsNoTracking()
-        .Select(c => new CategoryViewModel
+        List<CategoryViewModel> listOfCategories = await context.Categories
+            .AsNoTracking()
+            .Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+            })
+            .ToListAsync();
+
+        var houseCategories = new HouseFormViewModel
         {
-            Id = c.Id,
-            Name = c.Name,
-        })
-        .ToListAsync();
-        var houseCategories = new HouseFormViewModel()
-        {
-            Categories = ListOfCategories
+            Categories = listOfCategories
         };
+
         return View(houseCategories);
     }
 
@@ -82,16 +92,13 @@ public class HouseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateHouse(HouseFormViewModel model)
     {
-
         var houseCategories = await GetCategories();
 
         if (!ModelState.IsValid)
         {
-
             model.Categories = houseCategories;
             return View(model);
         }
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         bool addressExists = await context.Houses
             .AnyAsync(h => h.Address.ToLower() == model.Address.ToLower());
@@ -102,6 +109,8 @@ public class HouseController : Controller
             ModelState.AddModelError("Address", "This address is already registered");
             return View(model);
         }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var newHouse = new House
         {
@@ -126,7 +135,8 @@ public class HouseController : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var houses = context.Houses
+        var houses = await context.Houses
+            .AsNoTracking()
             .Where(h => h.AgentId == userId && h.IsDeleted == false)
             .Select(h => new HouseViewModel
             {
@@ -137,38 +147,57 @@ public class HouseController : Controller
                 CurentUserIsOwner = true
             })
             .ToListAsync();
+
         ViewBag.Title = "My houses";
         return View(nameof(AllHouses), houses);
     }
+
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> Edit(int id)
     {
         var house = await context.Houses.FindAsync(id);
+
+        if (house == null)
+        {
+            return NotFound();
+        }
+
         var houseCategories = await GetCategories();
 
-        var model = new HouseFormViewModel()
+        var model = new HouseFormViewModel
         {
+            Id = house.Id,
             Address = house.Address,
             ImageUrl = house.ImageUrl,
             Description = house.Description,
             Title = house.Title,
             PricePerMonth = house.PricePerMonth,
+            SelectedCategoryId = house.CategoryId,
             Categories = houseCategories,
         };
+
         return View(model);
     }
+
     [HttpPost]
     [Authorize]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(HouseFormViewModel model)
     {
-
         if (!ModelState.IsValid)
         {
-            var houseCategories = await GetCategories();
+            model.Categories = await GetCategories();
             return View(model);
         }
+
         var house = await context.Houses.FindAsync(model.Id);
+
+        if (house == null)
+        {
+            return NotFound();
+        }
+
         house.PricePerMonth = model.PricePerMonth;
         house.Address = model.Address;
         house.ImageUrl = model.ImageUrl;
@@ -180,26 +209,31 @@ public class HouseController : Controller
         return RedirectToAction(nameof(MyHouses));
     }
 
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var house = await context.Houses.FindAsync(id);
+
+        if (house == null)
+        {
+            return NotFound();
+        }
+
         house.IsDeleted = true;
         await context.SaveChangesAsync();
+
         return RedirectToAction(nameof(MyHouses));
     }
-
-
 
     private async Task<List<CategoryViewModel>> GetCategories()
     {
         return await context.Categories
             .AsNoTracking()
-            .Select(c => new CategoryViewModel()
+            .Select(c => new CategoryViewModel
             {
                 Id = c.Id,
                 Name = c.Name,
             })
             .ToListAsync();
     }
-}
 }
